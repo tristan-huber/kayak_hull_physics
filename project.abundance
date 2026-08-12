@@ -98,23 +98,6 @@
       ]
     },
     {
-      "atomType": "ExtractTag",
-      "x": 0.2955729166666667,
-      "y": 0.8,
-      "uniqueID": "id-75495",
-      "name": "Extract Tag",
-      "ioValues": [
-        {
-          "name": "geometry",
-          "ioValue": "__GEOMETRY_INPUT__"
-        }
-      ],
-      "tagIndex": 0,
-      "selectedTags": [],
-      "includeUntagged": false,
-      "notKeepOut": false
-    },
-    {
       "atomType": "Code",
       "x": 0.8632812499999999,
       "y": 0.8142857142857143,
@@ -4647,11 +4630,6 @@
       "ap2Name": "assembly",
       "ap1ID": "id-74274",
       "ap2ID": "id-74402"
-    },
-    {
-      "ap2Name": "geometry",
-      "ap1ID": "id-74708",
-      "ap2ID": "id-75495"
     },
     {
       "ap2Name": "assembly",
