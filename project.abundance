@@ -4349,8 +4349,8 @@
         },
         {
           "atomType": "Tag",
-          "x": 0.48632812500000006,
-          "y": 0.6371428571428571,
+          "x": 0.45768229166666663,
+          "y": 0.7371428571428572,
           "uniqueID": "id-75492",
           "name": "person",
           "ioValues": [
@@ -4362,18 +4362,34 @@
           "tags": [
             "person"
           ]
+        },
+        {
+          "atomType": "Tag",
+          "x": 0.4290364583333333,
+          "y": 0.21714285714285714,
+          "uniqueID": "id-75498",
+          "name": "battery",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ],
+          "tags": [
+            "battery"
+          ]
         }
       ],
       "allConnectors": [
         {
-          "ap2Name": "Shape 1",
-          "ap1ID": "id-74734",
-          "ap2ID": "id-75250"
-        },
-        {
           "ap2Name": "assembly",
           "ap1ID": "id-74734",
           "ap2ID": "id-75321"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74734",
+          "ap2ID": "id-75498"
         },
         {
           "ap2Name": "geometry",
@@ -4413,6 +4429,11 @@
         {
           "ap2Name": "Shape 2",
           "ap1ID": "id-75492",
+          "ap2ID": "id-75250"
+        },
+        {
+          "ap2Name": "Shape 1",
+          "ap1ID": "id-75498",
           "ap2ID": "id-75250"
         }
       ],
@@ -4521,6 +4542,23 @@
       "unitsKey": "Unitless",
       "fileTypeVersion": 1,
       "lastReloadedFromGithubAt": 1786560573038
+    },
+    {
+      "atomType": "ExtractTag",
+      "x": 0.2955729166666667,
+      "y": 0.8,
+      "uniqueID": "id-75495",
+      "name": "Extract Tag",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        }
+      ],
+      "tagIndex": 0,
+      "selectedTags": [],
+      "includeUntagged": false,
+      "notKeepOut": false
     }
   ],
   "allConnectors": [
@@ -4603,6 +4641,11 @@
       "ap2Name": "assembly",
       "ap1ID": "id-74708",
       "ap2ID": "id-75471"
+    },
+    {
+      "ap2Name": "geometry",
+      "ap1ID": "id-74708",
+      "ap2ID": "id-75495"
     },
     {
       "ap2Name": "Shape 3",
