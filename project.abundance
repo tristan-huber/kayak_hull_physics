@@ -300,8 +300,8 @@
     },
     {
       "atomType": "GitHubMolecule",
-      "x": 0.21484375,
-      "y": 0.7114285714285714,
+      "x": 0.17578125,
+      "y": 0.6285714285714286,
       "uniqueID": "id-74274",
       "name": "kayak_v2",
       "ioValues": [
@@ -1478,8 +1478,8 @@
     },
     {
       "atomType": "GitHubMolecule",
-      "x": 0.30729166666666663,
-      "y": 0.7142857142857143,
+      "x": 0.2825520833333333,
+      "y": 0.5628571428571428,
       "uniqueID": "id-74402",
       "name": "phys.SetDensity",
       "ioValues": [
@@ -1587,8 +1587,8 @@
     },
     {
       "atomType": "GitHubMolecule",
-      "x": 0.4765625,
-      "y": 0.7914285714285715,
+      "x": 0.365234375,
+      "y": 0.7085714285714285,
       "uniqueID": "id-74423",
       "name": "phys.CenterMass",
       "ioValues": [
@@ -1912,6 +1912,562 @@
           "ioValue": null
         }
       ]
+    },
+    {
+      "atomType": "GitHubMolecule",
+      "x": 0.13802083333333334,
+      "y": 0.8771428571428571,
+      "uniqueID": "id-74500",
+      "name": "G24_marine_battery",
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-74479",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Rectangle",
+          "x": 0.30078125,
+          "y": 0.24188311688311687,
+          "uniqueID": "id-74480",
+          "ioValues": [
+            {
+              "name": "x length",
+              "ioValue": 10.3
+            },
+            {
+              "name": "y length",
+              "ioValue": 6.8
+            }
+          ]
+        },
+        {
+          "atomType": "Extrude",
+          "x": 0.44140625,
+          "y": 0.3555194805194805,
+          "uniqueID": "id-74481",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "height",
+              "ioValue": 8.9
+            }
+          ]
+        },
+        {
+          "atomType": "Circle",
+          "x": 0.21171875,
+          "y": 0.6331168831168832,
+          "uniqueID": "id-74482",
+          "ioValues": [
+            {
+              "name": "diameter",
+              "ioValue": 0.5
+            }
+          ]
+        },
+        {
+          "atomType": "Constant",
+          "x": 0.15234375,
+          "y": 0.3782467532467532,
+          "uniqueID": "id-74483",
+          "name": "Height",
+          "value": 8.9
+        },
+        {
+          "atomType": "Constant",
+          "x": 0.16640625,
+          "y": 0.17370129870129872,
+          "uniqueID": "id-74484",
+          "name": "width",
+          "value": 10.3
+        },
+        {
+          "atomType": "Constant",
+          "x": 0.10234375,
+          "y": 0.48376623376623373,
+          "uniqueID": "id-74485",
+          "name": "PinInset",
+          "value": 1
+        },
+        {
+          "atomType": "Color",
+          "x": 0.48515625000000007,
+          "y": 0.5974025974025974,
+          "uniqueID": "id-74486",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ],
+          "selectedColor": "Black"
+        },
+        {
+          "atomType": "Extrude",
+          "x": 0.26640625,
+          "y": 0.7646103896103896,
+          "uniqueID": "id-74487",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "height",
+              "ioValue": 0.5
+            }
+          ]
+        },
+        {
+          "atomType": "Assembly",
+          "x": 0.69140625,
+          "y": 0.6412337662337662,
+          "uniqueID": "id-74488",
+          "ioValues": [
+            {
+              "name": "Shape 1",
+              "ioValue": null
+            },
+            {
+              "name": "Shape 2",
+              "ioValue": null
+            },
+            {
+              "name": "Shape 3",
+              "ioValue": null
+            }
+          ]
+        },
+        {
+          "atomType": "Move",
+          "x": 0.38203125,
+          "y": 0.7824675324675325,
+          "uniqueID": "id-74489",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "xDist",
+              "ioValue": 1,
+              "currentEquation": "PinInset"
+            },
+            {
+              "name": "yDist",
+              "ioValue": 1,
+              "currentEquation": "PinInset"
+            },
+            {
+              "name": "zDist",
+              "ioValue": 8.9,
+              "currentEquation": "Height"
+            }
+          ]
+        },
+        {
+          "atomType": "Color",
+          "x": 0.47734374999999996,
+          "y": 0.7077922077922079,
+          "uniqueID": "id-74490",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ],
+          "selectedColor": "Red"
+        },
+        {
+          "atomType": "Constant",
+          "x": 0.15078125,
+          "y": 0.28084415584415584,
+          "uniqueID": "id-74491",
+          "name": "Depth",
+          "value": 6.8
+        },
+        {
+          "atomType": "Move",
+          "x": 0.378125,
+          "y": 0.5616883116883117,
+          "uniqueID": "id-74492",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "xDist",
+              "ioValue": 9.3,
+              "currentEquation": "width - PinInset"
+            },
+            {
+              "name": "yDist",
+              "ioValue": 1,
+              "currentEquation": "PinInset"
+            },
+            {
+              "name": "zDist",
+              "ioValue": 8.9,
+              "currentEquation": "Height"
+            }
+          ]
+        },
+        {
+          "atomType": "Move",
+          "x": 0.60390625,
+          "y": 0.336038961038961,
+          "uniqueID": "id-74493",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "xDist",
+              "ioValue": 5.15,
+              "currentEquation": "width / 2"
+            },
+            {
+              "name": "yDist",
+              "ioValue": 3.4,
+              "currentEquation": "Depth / 2"
+            },
+            {
+              "name": "zDist",
+              "ioValue": 0
+            }
+          ]
+        },
+        {
+          "atomType": "Add-BOM-Tag",
+          "x": 0.821875,
+          "y": 0.40584415584415584,
+          "uniqueID": "id-74494",
+          "name": "Add BOM Tag",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "Item Name",
+              "ioValue": "12.8V 100Ah battery",
+              "currentEquation": "12.8V 100Ah battery"
+            },
+            {
+              "name": "Number Needed",
+              "ioValue": 1
+            },
+            {
+              "name": "Cost (USD)",
+              "ioValue": 185
+            },
+            {
+              "name": "Source Link",
+              "ioValue": "https://www.amazon.com/dp/B0DZXDWJXR",
+              "currentEquation": "https://www.amazon.com/dp/B0DZXDWJXR"
+            }
+          ],
+          "BOMitem": {
+            "BOMitemName": "12.8V 100Ah battery",
+            "numberNeeded": 1,
+            "costUSD": 185,
+            "source": "https://www.amazon.com/dp/B0DZXDWJXR"
+          }
+        },
+        {
+          "atomType": "GitHubMolecule",
+          "x": 0.8046875000000001,
+          "y": 0.7771428571428571,
+          "uniqueID": "id-74495",
+          "name": "phys.SetMass",
+          "ioValues": [
+            {
+              "name": "assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "mass",
+              "ioValue": 21.9
+            }
+          ],
+          "topLevel": false,
+          "allAtoms": [
+            {
+              "atomType": "Output",
+              "x": 0.98,
+              "y": 0.5,
+              "uniqueID": "id-74496",
+              "ioValues": [
+                {
+                  "name": "number or geometry",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                }
+              ]
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.14,
+              "uniqueID": "id-74497",
+              "name": "assembly",
+              "type": "geometry"
+            },
+            {
+              "atomType": "Code",
+              "x": 0.4029947916666667,
+              "y": 0.6942857142857143,
+              "uniqueID": "id-74498",
+              "ioValues": [
+                {
+                  "name": "assembly",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                },
+                {
+                  "name": "mass",
+                  "ioValue": 21.9
+                }
+              ],
+              "interpreterVersion": 1,
+              "code": "// Set mass\nfunction run(assembly: Assembly, mass: number) {\n  const initial = assembly.metadata ? assembly.metadata : {}\n  initial.mass = mass;\n  assembly.metadata = initial;\n  return assembly\n}",
+              "compiledCode": "\"use strict\";\n// Set mass\nfunction run(assembly, mass) {\n    const initial = assembly.metadata ? assembly.metadata : {};\n    initial.mass = mass;\n    assembly.metadata = initial;\n    return assembly;\n}\n"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.22400000000000003,
+              "uniqueID": "id-74499",
+              "name": "mass"
+            }
+          ],
+          "allConnectors": [
+            {
+              "ap2Name": "assembly",
+              "ap1ID": "id-74497",
+              "ap2ID": "id-74498"
+            },
+            {
+              "ap2Name": "number or geometry",
+              "ap1ID": "id-74498",
+              "ap2ID": "id-74496"
+            },
+            {
+              "ap2Name": "mass",
+              "ap1ID": "id-74499",
+              "ap2ID": "id-74498"
+            }
+          ],
+          "parentRepo": {
+            "repoName": "phys.SetMass",
+            "dateCreated": "2026-08-12T16:42:56Z",
+            "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.SetMass/master/README.md?sanitize=true",
+            "yyyy": 2026,
+            "topMoleculeID": "id-43071",
+            "topics": [
+              "abundance-tool"
+            ],
+            "githubMoleculesUsed": [],
+            "html_url": "https://github.com/tristan-huber/phys.SetMass",
+            "parentRepo": null,
+            "forks": 0,
+            "dateModified": "739840",
+            "ranking": 0,
+            "searchField": "phys.setmass tristan-huber adds a mass to the metadata of an assembly. in general this superseed masses of the leafs of an assembly. consumed by other physics methods in utils. arbitrary units.",
+            "owner": "tristan-huber",
+            "description": "Adds a mass to the metadata of an assembly. In general this superseed masses of the leafs of an assembly. Consumed by other physics methods in utils. Arbitrary units.",
+            "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.SetMass/master/project.svg?sanitize=true",
+            "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.SetMass/master/project.abundance?sanitize=true",
+            "isLocal": false
+          },
+          "unitsKey": "Unitless",
+          "fileTypeVersion": 1,
+          "lastReloadedFromGithubAt": 1786556763102
+        }
+      ],
+      "allConnectors": [
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74480",
+          "ap2ID": "id-74481"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74481",
+          "ap2ID": "id-74493"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74482",
+          "ap2ID": "id-74487"
+        },
+        {
+          "ap2Name": "height",
+          "ap1ID": "id-74483",
+          "ap2ID": "id-74481"
+        },
+        {
+          "ap2Name": "x length",
+          "ap1ID": "id-74484",
+          "ap2ID": "id-74480"
+        },
+        {
+          "ap2Name": "Shape 1",
+          "ap1ID": "id-74486",
+          "ap2ID": "id-74488"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74487",
+          "ap2ID": "id-74489"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74487",
+          "ap2ID": "id-74492"
+        },
+        {
+          "ap2Name": "assembly",
+          "ap1ID": "id-74488",
+          "ap2ID": "id-74495"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74489",
+          "ap2ID": "id-74490"
+        },
+        {
+          "ap2Name": "Shape 2",
+          "ap1ID": "id-74490",
+          "ap2ID": "id-74488"
+        },
+        {
+          "ap2Name": "y length",
+          "ap1ID": "id-74491",
+          "ap2ID": "id-74480"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74492",
+          "ap2ID": "id-74486"
+        },
+        {
+          "ap2Name": "Shape 3",
+          "ap1ID": "id-74493",
+          "ap2ID": "id-74488"
+        },
+        {
+          "ap2Name": "number or geometry",
+          "ap1ID": "id-74494",
+          "ap2ID": "id-74479"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-74495",
+          "ap2ID": "id-74494"
+        }
+      ],
+      "parentRepo": {
+        "lastFoundGit": "2026-08-12T10:23:38.987Z",
+        "privateRepo": false,
+        "repoName": "G24_marine_battery",
+        "dateCreated": "2026-07-08T23:43:50Z",
+        "likes": 0,
+        "pngURL": "https://raw.githubusercontent.com/tristan-huber/G24_marine_battery/main/project.png",
+        "readMe": "https://raw.githubusercontent.com/tristan-huber/G24_marine_battery/master/README.md?sanitize=true",
+        "yyyy": 2026,
+        "topMoleculeID": "id-21801",
+        "userSetAsThumbnail": false,
+        "githubMoleculesUsed": [
+          {
+            "owner": "tristan-huber",
+            "repoName": "phys.SetMass"
+          }
+        ],
+        "html_url": "https://github.com/tristan-huber/G24_marine_battery",
+        "topics": [
+          "hardware",
+          "electronics"
+        ],
+        "pullRequests": [],
+        "parentRepo": null,
+        "forks": 0,
+        "dateModified": "739840",
+        "ranking": 0.3,
+        "searchField": "g24_marine_battery tristan-huber model for a group24 sized marine battery. bom links to a lithium ion version available on amazon. hardware electronics",
+        "owner": "tristan-huber",
+        "description": "Model for a Group24 sized marine battery. BOM links to a Lithium Ion version available on amazon.",
+        "contentURL": "https://raw.githubusercontent.com/tristan-huber/G24_marine_battery/master/project.abundance?sanitize=true",
+        "svgURL": "https://raw.githubusercontent.com/tristan-huber/G24_marine_battery/master/project.svg?sanitize=true",
+        "isLocal": false
+      },
+      "unitsKey": "Inches",
+      "fileTypeVersion": 1,
+      "lastReloadedFromGithubAt": 1786557134715
+    },
+    {
+      "atomType": "Move",
+      "x": 0.2721354166666667,
+      "y": 0.8942857142857142,
+      "uniqueID": "id-74561",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "xDist",
+          "ioValue": 91,
+          "currentEquation": "91"
+        },
+        {
+          "name": "yDist",
+          "ioValue": 4,
+          "currentEquation": "4"
+        },
+        {
+          "name": "zDist",
+          "ioValue": -10,
+          "currentEquation": "-10"
+        }
+      ]
+    },
+    {
+      "atomType": "Rotate",
+      "x": 0.20052083333333334,
+      "y": 0.8514285714285714,
+      "uniqueID": "id-74567",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "x-axis degrees",
+          "ioValue": 90,
+          "currentEquation": "90"
+        },
+        {
+          "name": "y-axis degrees",
+          "ioValue": 0
+        },
+        {
+          "name": "z-axis degrees",
+          "ioValue": 0
+        }
+      ]
     }
   ],
   "allConnectors": [
@@ -1924,6 +2480,11 @@
       "ap2Name": "profileShape",
       "ap1ID": "id-74158",
       "ap2ID": "id-74274"
+    },
+    {
+      "ap2Name": "number or geometry",
+      "ap1ID": "id-74158",
+      "ap2ID": "id-74156"
     },
     {
       "ap2Name": "Thickness",
@@ -1979,6 +2540,16 @@
       "ap2Name": "assembly",
       "ap1ID": "id-74473",
       "ap2ID": "id-74457"
+    },
+    {
+      "ap2Name": "geometry",
+      "ap1ID": "id-74500",
+      "ap2ID": "id-74567"
+    },
+    {
+      "ap2Name": "geometry",
+      "ap1ID": "id-74567",
+      "ap2ID": "id-74561"
     }
   ],
   "unitsKey": "Inches",
