@@ -199,7 +199,8 @@
         },
         {
           "name": "sliceThickness",
-          "ioValue": 0.5
+          "ioValue": 0.5,
+          "currentEquation": "0.5"
         },
         {
           "name": "slicePositions",
