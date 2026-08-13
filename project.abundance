@@ -51,22 +51,22 @@
     },
     {
       "atomType": "Input",
-      "x": 0.0231,
-      "y": 0.14,
+      "x": 0.025384615384615384,
+      "y": 0.15384615384615385,
       "uniqueID": "id-74160",
       "name": "hull_thickness"
     },
     {
       "atomType": "Input",
-      "x": 0.0231,
-      "y": 0.22400000000000003,
+      "x": 0.025384615384615384,
+      "y": 0.24615384615384617,
       "uniqueID": "id-74163",
       "name": "hull_density"
     },
     {
       "atomType": "Input",
-      "x": 0.0231,
-      "y": 0.30800000000000005,
+      "x": 0.025384615384615384,
+      "y": 0.3384615384615385,
       "uniqueID": "id-74166",
       "name": "bulkhead_offsets",
       "type": "array",
@@ -160,8 +160,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-74188",
           "name": "assembly",
           "type": "geometry"
@@ -187,8 +187,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
           "uniqueID": "id-74190",
           "name": "density"
         }
@@ -269,8 +269,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-74404",
           "name": "assembly",
           "type": "geometry"
@@ -296,8 +296,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
           "uniqueID": "id-74406",
           "name": "density"
         }
@@ -374,15 +374,15 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-74459",
           "name": "assembly"
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
           "uniqueID": "id-74460",
           "name": "defaultDensity"
         },
@@ -478,8 +478,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-75537",
           "name": "Assembly",
           "type": "faceselect",
@@ -560,6 +560,318 @@
     },
     {
       "atomType": "GitHubMolecule",
+      "x": 0.5703125,
+      "y": 0.3457142857142857,
+      "uniqueID": "id-76063",
+      "name": "phys.CenterMass",
+      "ioValues": [
+        {
+          "name": "defaultDensity",
+          "ioValue": 1
+        }
+      ],
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-76059",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
+          "uniqueID": "id-76060",
+          "name": "assembly"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
+          "uniqueID": "id-76061",
+          "name": "defaultDensity"
+        },
+        {
+          "atomType": "Code",
+          "x": 0.3671875,
+          "y": 0.64,
+          "uniqueID": "id-76062",
+          "ioValues": [
+            {
+              "name": "assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "defaultDensity",
+              "ioValue": 1
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
+          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
+        }
+      ],
+      "allConnectors": [
+        {
+          "ap2Name": "assembly",
+          "ap1ID": "id-76060",
+          "ap2ID": "id-76062"
+        },
+        {
+          "ap2Name": "defaultDensity",
+          "ap1ID": "id-76061",
+          "ap2ID": "id-76062"
+        },
+        {
+          "ap2Name": "number or geometry",
+          "ap1ID": "id-76062",
+          "ap2ID": "id-76059"
+        }
+      ],
+      "parentRepo": {
+        "privateRepo": false,
+        "repoName": "phys.CenterMass",
+        "dateCreated": "2026-08-12T16:57:42Z",
+        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
+        "yyyy": 2026,
+        "topMoleculeID": "id-53737",
+        "githubMoleculesUsed": [],
+        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
+        "topics": [
+          "abundance-tool"
+        ],
+        "parentRepo": null,
+        "forks": 0,
+        "dateModified": "739840",
+        "ranking": 0,
+        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
+        "owner": "tristan-huber",
+        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
+        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
+        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
+        "isLocal": false
+      },
+      "unitsKey": "Unitless",
+      "fileTypeVersion": 1,
+      "lastReloadedFromGithubAt": 1786564522159
+    },
+    {
+      "atomType": "GitHubMolecule",
+      "x": 0.37369791666666663,
+      "y": 0.8714285714285714,
+      "uniqueID": "id-76080",
+      "name": "phys.CenterMass",
+      "ioValues": [
+        {
+          "name": "defaultDensity",
+          "ioValue": 1
+        }
+      ],
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-76076",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
+          "uniqueID": "id-76077",
+          "name": "assembly"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
+          "uniqueID": "id-76078",
+          "name": "defaultDensity"
+        },
+        {
+          "atomType": "Code",
+          "x": 0.3671875,
+          "y": 0.64,
+          "uniqueID": "id-76079",
+          "ioValues": [
+            {
+              "name": "assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "defaultDensity",
+              "ioValue": 1
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
+          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
+        }
+      ],
+      "allConnectors": [
+        {
+          "ap2Name": "assembly",
+          "ap1ID": "id-76077",
+          "ap2ID": "id-76079"
+        },
+        {
+          "ap2Name": "defaultDensity",
+          "ap1ID": "id-76078",
+          "ap2ID": "id-76079"
+        },
+        {
+          "ap2Name": "number or geometry",
+          "ap1ID": "id-76079",
+          "ap2ID": "id-76076"
+        }
+      ],
+      "parentRepo": {
+        "privateRepo": false,
+        "repoName": "phys.CenterMass",
+        "dateCreated": "2026-08-12T16:57:42Z",
+        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
+        "yyyy": 2026,
+        "topMoleculeID": "id-53737",
+        "githubMoleculesUsed": [],
+        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
+        "topics": [
+          "abundance-tool"
+        ],
+        "parentRepo": null,
+        "forks": 0,
+        "dateModified": "739840",
+        "ranking": 0,
+        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
+        "owner": "tristan-huber",
+        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
+        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
+        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
+        "isLocal": false
+      },
+      "unitsKey": "Unitless",
+      "fileTypeVersion": 1,
+      "lastReloadedFromGithubAt": 1786564528615
+    },
+    {
+      "atomType": "GitHubMolecule",
+      "x": 0.365234375,
+      "y": 0.7085714285714285,
+      "uniqueID": "id-76097",
+      "name": "phys.CenterMass",
+      "ioValues": [
+        {
+          "name": "defaultDensity",
+          "ioValue": 1
+        }
+      ],
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-76093",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
+          "uniqueID": "id-76094",
+          "name": "assembly"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
+          "uniqueID": "id-76095",
+          "name": "defaultDensity"
+        },
+        {
+          "atomType": "Code",
+          "x": 0.3671875,
+          "y": 0.64,
+          "uniqueID": "id-76096",
+          "ioValues": [
+            {
+              "name": "assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "defaultDensity",
+              "ioValue": 1
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
+          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
+        }
+      ],
+      "allConnectors": [
+        {
+          "ap2Name": "assembly",
+          "ap1ID": "id-76094",
+          "ap2ID": "id-76096"
+        },
+        {
+          "ap2Name": "defaultDensity",
+          "ap1ID": "id-76095",
+          "ap2ID": "id-76096"
+        },
+        {
+          "ap2Name": "number or geometry",
+          "ap1ID": "id-76096",
+          "ap2ID": "id-76093"
+        }
+      ],
+      "parentRepo": {
+        "privateRepo": false,
+        "repoName": "phys.CenterMass",
+        "dateCreated": "2026-08-12T16:57:42Z",
+        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
+        "yyyy": 2026,
+        "topMoleculeID": "id-53737",
+        "githubMoleculesUsed": [],
+        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
+        "topics": [
+          "abundance-tool"
+        ],
+        "parentRepo": null,
+        "forks": 0,
+        "dateModified": "739840",
+        "ranking": 0,
+        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
+        "owner": "tristan-huber",
+        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
+        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
+        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
+        "isLocal": false
+      },
+      "unitsKey": "Unitless",
+      "fileTypeVersion": 1,
+      "lastReloadedFromGithubAt": 1786564531577
+    },
+    {
+      "atomType": "GitHubMolecule",
       "x": 0.17578125,
       "y": 0.6285714285714286,
       "uniqueID": "id-74274",
@@ -599,23 +911,23 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-74271",
           "name": "profileShape",
           "type": "geometry"
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
           "uniqueID": "id-74272",
           "name": "sliceThickness"
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.30800000000000005,
+          "x": 0.025384615384615384,
+          "y": 0.3384615384615385,
           "uniqueID": "id-74273",
           "name": "slicePositions",
           "type": "array"
@@ -661,16 +973,16 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-74228",
               "name": "kayakbody",
               "type": "geometry"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-74229",
               "name": "positions",
               "type": "array"
@@ -812,8 +1124,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.30800000000000005,
+              "x": 0.025384615384615384,
+              "y": 0.3384615384615385,
               "uniqueID": "id-74256",
               "name": "thickness"
             },
@@ -894,24 +1206,24 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74236",
                   "name": "toMove",
                   "type": "geometry"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-74237",
                   "name": "offsets",
                   "type": "array"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.30800000000000005,
+                  "x": 0.025384615384615384,
+                  "y": 0.3384615384615385,
                   "uniqueID": "id-74238",
                   "name": "direction",
                   "type": "point3d",
@@ -1153,8 +1465,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74248",
                   "name": "Shape",
                   "type": "geometry"
@@ -1242,8 +1554,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74253",
                   "name": "Shape",
                   "type": "geometry"
@@ -1335,16 +1647,16 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74259",
                   "name": "B",
                   "type": "geometry"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-74260",
                   "name": "A",
                   "type": "geometry"
@@ -1500,16 +1812,16 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74267",
                   "name": "A",
                   "type": "geometry"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-74268",
                   "name": "B",
                   "type": "geometry"
@@ -1932,8 +2244,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-75218",
               "name": "assembly",
               "type": "geometry"
@@ -1959,8 +2271,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-75220",
               "name": "mass"
             }
@@ -2315,8 +2627,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74731",
                   "name": "assembly",
                   "type": "geometry"
@@ -2342,8 +2654,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-74733",
                   "name": "mass"
                 }
@@ -3125,16 +3437,16 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-74962",
                   "name": "Geometry",
                   "type": "geometry"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-74963",
                   "name": "Scale Factor",
                   "type": "number"
@@ -3372,8 +3684,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-75079",
                   "name": "ShapeToExplode",
                   "type": "geometry"
@@ -3464,8 +3776,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-75093",
                   "type": "partselect",
                   "selectedLeafIndexes": [
@@ -3559,8 +3871,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-75106",
                   "type": "partselect",
                   "selectedLeafIndexes": [
@@ -3707,30 +4019,30 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.14,
+                  "x": 0.025384615384615384,
+                  "y": 0.15384615384615385,
                   "uniqueID": "id-75119",
                   "name": "PivotPoint",
                   "type": "array"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.22400000000000003,
+                  "x": 0.025384615384615384,
+                  "y": 0.24615384615384617,
                   "uniqueID": "id-75120",
                   "name": "X"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.30800000000000005,
+                  "x": 0.025384615384615384,
+                  "y": 0.3384615384615385,
                   "uniqueID": "id-75121",
                   "name": "Y"
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.39200000000000007,
+                  "x": 0.025384615384615384,
+                  "y": 0.4307692307692308,
                   "uniqueID": "id-75122",
                   "name": "Z"
                 },
@@ -3856,8 +4168,8 @@
                 },
                 {
                   "atomType": "Input",
-                  "x": 0.0231,
-                  "y": 0.4760000000000001,
+                  "x": 0.025384615384615384,
+                  "y": 0.5230769230769231,
                   "uniqueID": "id-75129",
                   "name": "Geometry"
                 },
@@ -3945,8 +4257,8 @@
                     },
                     {
                       "atomType": "Input",
-                      "x": 0.0231,
-                      "y": 0.14,
+                      "x": 0.025384615384615384,
+                      "y": 0.15384615384615385,
                       "uniqueID": "id-75134",
                       "name": "X"
                     },
@@ -3975,15 +4287,15 @@
                     },
                     {
                       "atomType": "Input",
-                      "x": 0.0231,
-                      "y": 0.22400000000000003,
+                      "x": 0.025384615384615384,
+                      "y": 0.24615384615384617,
                       "uniqueID": "id-75136",
                       "name": "Y"
                     },
                     {
                       "atomType": "Input",
-                      "x": 0.0231,
-                      "y": 0.30800000000000005,
+                      "x": 0.025384615384615384,
+                      "y": 0.3384615384615385,
                       "uniqueID": "id-75137",
                       "name": "Z"
                     }
@@ -4246,318 +4558,6 @@
         }
       ],
       "fileTypeVersion": 1
-    },
-    {
-      "atomType": "GitHubMolecule",
-      "x": 0.5703125,
-      "y": 0.3457142857142857,
-      "uniqueID": "id-76063",
-      "name": "phys.CenterMass",
-      "ioValues": [
-        {
-          "name": "defaultDensity",
-          "ioValue": 1
-        }
-      ],
-      "topLevel": false,
-      "allAtoms": [
-        {
-          "atomType": "Output",
-          "x": 0.98,
-          "y": 0.5,
-          "uniqueID": "id-76059",
-          "ioValues": [
-            {
-              "name": "number or geometry",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ]
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
-          "uniqueID": "id-76060",
-          "name": "assembly"
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
-          "uniqueID": "id-76061",
-          "name": "defaultDensity"
-        },
-        {
-          "atomType": "Code",
-          "x": 0.3671875,
-          "y": 0.64,
-          "uniqueID": "id-76062",
-          "ioValues": [
-            {
-              "name": "assembly",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "defaultDensity",
-              "ioValue": 1
-            }
-          ],
-          "interpreterVersion": 1,
-          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
-          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
-        }
-      ],
-      "allConnectors": [
-        {
-          "ap2Name": "assembly",
-          "ap1ID": "id-76060",
-          "ap2ID": "id-76062"
-        },
-        {
-          "ap2Name": "defaultDensity",
-          "ap1ID": "id-76061",
-          "ap2ID": "id-76062"
-        },
-        {
-          "ap2Name": "number or geometry",
-          "ap1ID": "id-76062",
-          "ap2ID": "id-76059"
-        }
-      ],
-      "parentRepo": {
-        "privateRepo": false,
-        "repoName": "phys.CenterMass",
-        "dateCreated": "2026-08-12T16:57:42Z",
-        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
-        "yyyy": 2026,
-        "topMoleculeID": "id-53737",
-        "githubMoleculesUsed": [],
-        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
-        "topics": [
-          "abundance-tool"
-        ],
-        "parentRepo": null,
-        "forks": 0,
-        "dateModified": "739840",
-        "ranking": 0,
-        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
-        "owner": "tristan-huber",
-        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
-        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
-        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
-        "isLocal": false
-      },
-      "unitsKey": "Unitless",
-      "fileTypeVersion": 1,
-      "lastReloadedFromGithubAt": 1786564522159
-    },
-    {
-      "atomType": "GitHubMolecule",
-      "x": 0.37369791666666663,
-      "y": 0.8714285714285714,
-      "uniqueID": "id-76080",
-      "name": "phys.CenterMass",
-      "ioValues": [
-        {
-          "name": "defaultDensity",
-          "ioValue": 1
-        }
-      ],
-      "topLevel": false,
-      "allAtoms": [
-        {
-          "atomType": "Output",
-          "x": 0.98,
-          "y": 0.5,
-          "uniqueID": "id-76076",
-          "ioValues": [
-            {
-              "name": "number or geometry",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ]
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
-          "uniqueID": "id-76077",
-          "name": "assembly"
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
-          "uniqueID": "id-76078",
-          "name": "defaultDensity"
-        },
-        {
-          "atomType": "Code",
-          "x": 0.3671875,
-          "y": 0.64,
-          "uniqueID": "id-76079",
-          "ioValues": [
-            {
-              "name": "assembly",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "defaultDensity",
-              "ioValue": 1
-            }
-          ],
-          "interpreterVersion": 1,
-          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
-          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
-        }
-      ],
-      "allConnectors": [
-        {
-          "ap2Name": "assembly",
-          "ap1ID": "id-76077",
-          "ap2ID": "id-76079"
-        },
-        {
-          "ap2Name": "defaultDensity",
-          "ap1ID": "id-76078",
-          "ap2ID": "id-76079"
-        },
-        {
-          "ap2Name": "number or geometry",
-          "ap1ID": "id-76079",
-          "ap2ID": "id-76076"
-        }
-      ],
-      "parentRepo": {
-        "privateRepo": false,
-        "repoName": "phys.CenterMass",
-        "dateCreated": "2026-08-12T16:57:42Z",
-        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
-        "yyyy": 2026,
-        "topMoleculeID": "id-53737",
-        "githubMoleculesUsed": [],
-        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
-        "topics": [
-          "abundance-tool"
-        ],
-        "parentRepo": null,
-        "forks": 0,
-        "dateModified": "739840",
-        "ranking": 0,
-        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
-        "owner": "tristan-huber",
-        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
-        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
-        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
-        "isLocal": false
-      },
-      "unitsKey": "Unitless",
-      "fileTypeVersion": 1,
-      "lastReloadedFromGithubAt": 1786564528615
-    },
-    {
-      "atomType": "GitHubMolecule",
-      "x": 0.365234375,
-      "y": 0.7085714285714285,
-      "uniqueID": "id-76097",
-      "name": "phys.CenterMass",
-      "ioValues": [
-        {
-          "name": "defaultDensity",
-          "ioValue": 1
-        }
-      ],
-      "topLevel": false,
-      "allAtoms": [
-        {
-          "atomType": "Output",
-          "x": 0.98,
-          "y": 0.5,
-          "uniqueID": "id-76093",
-          "ioValues": [
-            {
-              "name": "number or geometry",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ]
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.14,
-          "uniqueID": "id-76094",
-          "name": "assembly"
-        },
-        {
-          "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.22400000000000003,
-          "uniqueID": "id-76095",
-          "name": "defaultDensity"
-        },
-        {
-          "atomType": "Code",
-          "x": 0.3671875,
-          "y": 0.64,
-          "uniqueID": "id-76096",
-          "ioValues": [
-            {
-              "name": "assembly",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "defaultDensity",
-              "ioValue": 1
-            }
-          ],
-          "interpreterVersion": 1,
-          "code": "function run(assembly: Assembly, defaultDensity: number) {\n\n  // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n  const getMass = (leaf: Assembly, defaultDensity: number) => {\n    const props = replicad.measureShapeVolumeProperties(leaf.geometry as replicad.Shape3D)\n    let mass = defaultDensity * props.volume;\n    if (leaf.metadata?.mass != undefined) {\n      mass = leaf.metadata.mass;\n    } else if (leaf.metadata?.density != undefined) {\n      mass = leaf.metadata.density * props.volume\n    }\n    return mass;\n  }\n\n  const points: MassPoint[] = []\n  const helper = (subassembly: Assembly, defaultDensity: number) => {\n    if (subassembly.isLeaf()) {\n      if (subassembly.isPoint()) {\n        points.push({ loc: (subassembly.geometry as replicad.Vertex).asTuple(), weight: getMass(subassembly, defaultDensity) })\n      } else {\n        const props = replicad.measureShapeVolumeProperties(subassembly.geometry as replicad.Shape3D)\n        points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) })\n      }\n    } else { // is not leaf\n      if (subassembly.metadata?.mass) { // this branch has a mass value set\n        const subshapePoints: MassPoint[] = []\n        subassembly.onLeafs((leaf) => {\n          if (leaf.is3D()) {\n            const props = replicad.measureShapeVolumeProperties((leaf.geometry as replicad.Shape3D))\n            subshapePoints.push({ loc: props.centerOfMass, weight: props.volume })\n          }\n          return leaf;\n        })\n        const center = centerOfMass(subshapePoints)\n        points.push({ loc: center.loc, weight: subassembly.metadata.mass })\n      } else { // no mass value set on this branch. continue traversal\n        (subassembly.geometry as Assembly[]).forEach((a) => {\n          if (subassembly.metadata?.density) {\n            helper(a, subassembly.metadata.density)\n          } else {\n            helper(a, defaultDensity)\n          }\n        })\n      }\n    }\n  }\n\n  helper(assembly, defaultDensity)\n\n  const center = centerOfMass(points);\n  return new Assembly({\n    geometry: replicad.makeVertex(center.loc),\n    metadata: { mass: center.weight }\n  })\n}\n\ninterface MassPoint {\n  loc: [number, number, number],\n  weight: number\n}\n\n\nfunction centerOfMass(points: MassPoint[]): MassPoint {\n  let totalMass = 0;\n  let sx = 0, sy = 0, sz = 0;\n\n  for (const { loc, weight } of points) {\n    const [x, y, z] = loc;\n    const m = weight;\n    sx += x * m;\n    sy += y * m;\n    sz += z * m;\n    totalMass += m;\n  }\n\n  if (totalMass === 0) {\n    throw new Error(\"centerOfMass: total mass is zero.\");\n  }\n\n  return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass }\n}",
-          "compiledCode": "\"use strict\";\nfunction run(assembly, defaultDensity) {\n    // TODO: this needs to walk the tree so that we give higher metadata  higher priority\n    const getMass = (leaf, defaultDensity) => {\n        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n        let mass = defaultDensity * props.volume;\n        if (leaf.metadata?.mass != undefined) {\n            mass = leaf.metadata.mass;\n        }\n        else if (leaf.metadata?.density != undefined) {\n            mass = leaf.metadata.density * props.volume;\n        }\n        return mass;\n    };\n    const points = [];\n    const helper = (subassembly, defaultDensity) => {\n        if (subassembly.isLeaf()) {\n            if (subassembly.isPoint()) {\n                points.push({ loc: subassembly.geometry.asTuple(), weight: getMass(subassembly, defaultDensity) });\n            }\n            else {\n                const props = replicad.measureShapeVolumeProperties(subassembly.geometry);\n                points.push({ loc: props.centerOfMass, weight: getMass(subassembly, defaultDensity) });\n            }\n        }\n        else { // is not leaf\n            if (subassembly.metadata?.mass) { // this branch has a mass value set\n                const subshapePoints = [];\n                subassembly.onLeafs((leaf) => {\n                    if (leaf.is3D()) {\n                        const props = replicad.measureShapeVolumeProperties(leaf.geometry);\n                        subshapePoints.push({ loc: props.centerOfMass, weight: props.volume });\n                    }\n                    return leaf;\n                });\n                const center = centerOfMass(subshapePoints);\n                points.push({ loc: center.loc, weight: subassembly.metadata.mass });\n            }\n            else { // no mass value set on this branch. continue traversal\n                subassembly.geometry.forEach((a) => {\n                    if (subassembly.metadata?.density) {\n                        helper(a, subassembly.metadata.density);\n                    }\n                    else {\n                        helper(a, defaultDensity);\n                    }\n                });\n            }\n        }\n    };\n    helper(assembly, defaultDensity);\n    const center = centerOfMass(points);\n    return new Assembly({\n        geometry: replicad.makeVertex(center.loc),\n        metadata: { mass: center.weight }\n    });\n}\nfunction centerOfMass(points) {\n    let totalMass = 0;\n    let sx = 0, sy = 0, sz = 0;\n    for (const { loc, weight } of points) {\n        const [x, y, z] = loc;\n        const m = weight;\n        sx += x * m;\n        sy += y * m;\n        sz += z * m;\n        totalMass += m;\n    }\n    if (totalMass === 0) {\n        throw new Error(\"centerOfMass: total mass is zero.\");\n    }\n    return { loc: [sx / totalMass, sy / totalMass, sz / totalMass], weight: totalMass };\n}\n"
-        }
-      ],
-      "allConnectors": [
-        {
-          "ap2Name": "assembly",
-          "ap1ID": "id-76094",
-          "ap2ID": "id-76096"
-        },
-        {
-          "ap2Name": "defaultDensity",
-          "ap1ID": "id-76095",
-          "ap2ID": "id-76096"
-        },
-        {
-          "ap2Name": "number or geometry",
-          "ap1ID": "id-76096",
-          "ap2ID": "id-76093"
-        }
-      ],
-      "parentRepo": {
-        "privateRepo": false,
-        "repoName": "phys.CenterMass",
-        "dateCreated": "2026-08-12T16:57:42Z",
-        "readMe": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/README.md?sanitize=true",
-        "yyyy": 2026,
-        "topMoleculeID": "id-53737",
-        "githubMoleculesUsed": [],
-        "html_url": "https://github.com/tristan-huber/phys.CenterMass",
-        "topics": [
-          "abundance-tool"
-        ],
-        "parentRepo": null,
-        "forks": 0,
-        "dateModified": "739840",
-        "ranking": 0,
-        "searchField": "phys.centermass tristan-huber return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density. abundance-tool",
-        "owner": "tristan-huber",
-        "description": "return the center of mass of an assembly. uses the assigned metadata.mass values on subassemblies or falls back to default density.",
-        "contentURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.abundance?sanitize=true",
-        "svgURL": "https://raw.githubusercontent.com/tristan-huber/phys.CenterMass/master/project.svg?sanitize=true",
-        "isLocal": false
-      },
-      "unitsKey": "Unitless",
-      "fileTypeVersion": 1,
-      "lastReloadedFromGithubAt": 1786564531577
     }
   ],
   "allConnectors": [
@@ -4627,16 +4627,6 @@
       "ap2ID": "id-75531"
     },
     {
-      "ap2Name": "assembly",
-      "ap1ID": "id-74274",
-      "ap2ID": "id-74402"
-    },
-    {
-      "ap2Name": "assembly",
-      "ap1ID": "id-74708",
-      "ap2ID": "id-76080"
-    },
-    {
       "ap2Name": "Shape 1",
       "ap1ID": "id-76063",
       "ap2ID": "id-74473"
@@ -4650,6 +4640,16 @@
       "ap2Name": "Shape 2",
       "ap1ID": "id-76097",
       "ap2ID": "id-74473"
+    },
+    {
+      "ap2Name": "assembly",
+      "ap1ID": "id-74274",
+      "ap2ID": "id-74402"
+    },
+    {
+      "ap2Name": "assembly",
+      "ap1ID": "id-74708",
+      "ap2ID": "id-76080"
     }
   ],
   "unitsKey": "Inches",
