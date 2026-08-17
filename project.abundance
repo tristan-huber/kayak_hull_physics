@@ -2322,8 +2322,8 @@
         },
         {
           "atomType": "GitHubMolecule",
-          "x": 0.13736979166666669,
-          "y": 0.38285714285714284,
+          "x": 0.09309895833333333,
+          "y": 0.3485714285714286,
           "uniqueID": "id-74712",
           "name": "G24_marine_battery",
           "topLevel": false,
