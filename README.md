@@ -2,7 +2,7 @@
 
 # kayak_hull_physics
 
-![](/project.svg)
+![](/project.png)
 
 ## Inputs
 
